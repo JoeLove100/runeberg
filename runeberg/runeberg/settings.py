@@ -11,9 +11,23 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import json
+from runeberg.constants import Secrets
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Read in the secrets from local config file
+with open(os.path.join(BASE_DIR, "secrets.json")) as secrets_file:
+    secrets = json.load(secrets_file)
+
+
+def get_secret(key: str) -> str:
+    try:
+        return secrets[key]
+    except KeyError:
+        raise ImproperlyConfigured(f"No key found in secrets for {key}")
 
 
 # Quick-start development settings - unsuitable for production
@@ -77,6 +91,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'remote': {
+        'ENGINE': 'sql_server.pyodbc',
+        'HOST': 'runeberg-01.cotf89eynx0d.us-east-2.rds.amazonaws.com',
+        'NAME': 'Runescape',
+        'PORT': '1433',
+        'USER': get_secret(Secrets.REMOTE_DB_USERNAME),
+        'PASSWORD': get_secret(Secrets.REMOTE_DB_PASSWORD),
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+            'host_is_server': True
+        }
     }
 }
 
