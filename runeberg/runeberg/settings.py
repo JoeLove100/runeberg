@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'dataviewer'
+    'dataviewer',
 ]
 
 MIDDLEWARE = [
@@ -87,8 +87,12 @@ WSGI_APPLICATION = 'runeberg.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+# Set database routers
+db_router_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "db_routers")
+DATABASE_ROUTERS = [r'runeberg.db_routers.BuiltinsRouter', r"runeberg.db_routers.RemoteRouter"]
+
+# Database configuration - leave default blank
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -107,7 +111,7 @@ DATABASES = {
         }
     }
 }
-
+# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -146,3 +150,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Define settings for rest API framework
+REST_FRAMEWORK = {
+    # Use standard django permissions, read-only access
+    # for unauthorised users
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+
+}
