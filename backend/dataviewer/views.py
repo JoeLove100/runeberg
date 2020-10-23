@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
 from dataviewer.serializers import IndexSerializer, AssetSerializer, HistoricDataSerializer
 from dataviewer.models import Indices, Assets, HistoricData
+from django.views.generic.base import TemplateView
 
 
 class AssetViewSet(ModelViewSet):
@@ -34,3 +35,8 @@ class HistoricDataView(ListAPIView):
 
         asset_id = self.kwargs['asset_id']
         return HistoricData.objects.filter(assetid=asset_id)
+
+
+class DataChartView(TemplateView):
+
+    template_name = "dataviewer/data_chart.html"
