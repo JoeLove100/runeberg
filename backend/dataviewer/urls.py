@@ -11,5 +11,4 @@ router.register(r'indices', IndexViewSet)
 urlpatterns = [
    path(r'api/', include(router.urls)),
    path(r'api/data/<int:asset_id>/', HistoricDataView.as_view()),
-   path(r'', DataChartView.as_view())
 ]

@@ -2,3 +2,4 @@ django==2.2
 djangorestframework
 django-mssql-backend
 django-filter
+django-cors-headers

@@ -1,0 +1,13 @@
+<div style="width: 80%">
+    <canvas #lineChart>{{chart}}</canvas>
+    <ng-container *ngIf="availableAssets$ | async as availableAssets">
+        <select class="custom-select custom-select-sm"
+        [(ngModel)]='selectedId'
+        (change)="onSelectedAssetChanged()">
+            <option *ngFor="let asset of availableAssets"
+            [ngValue]="asset.id">
+            {{ asset.displayName }}
+            </option>
+        </select>
+    </ng-container>
+</div>
