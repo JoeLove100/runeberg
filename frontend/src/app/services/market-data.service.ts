@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http'
 import { Asset, DataPoint } from '../shared/shared.market-data';
 
 const baseUrl = "http://localhost:8000/dataviewer/api"
-const dataStart = "2020-01-01"
+const dataStart = "2015-01-01"
 
 @Injectable({
   providedIn: 'root'

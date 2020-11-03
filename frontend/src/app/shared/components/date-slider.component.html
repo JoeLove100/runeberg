@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="row">
+        <div class="col-auto">
+            Start:
+        </div>
+        <div class="col-2">
+            <input type="date" class="form-control" id="datePickerLow">
+        </div>
+        <div class="col-auto">
+            End
+        </div>
+        <div class="col-2">
+            <input type="date" class="form-control" id="datePickerHigh">
+        </div>
+        <div class="col-6">
+                <ngx-slider [(value)]="value" [(highValue)]="highValue" 
+                [options]="options"></ngx-slider>    
+        </div>
+    </div>
+</div>
+

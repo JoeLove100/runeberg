@@ -32,6 +32,7 @@ export class MainLineChartComponent implements OnInit{
     this.assetSelectedAction$
   ]).pipe(
     map(([availableAssets, selectedId]) => {
+      this.selectedId = selectedId;
       return availableAssets.find(asset => asset.id === selectedId)
     })
   )
@@ -70,13 +71,17 @@ export class MainLineChartComponent implements OnInit{
         datasets: [{
           data: selectedData.map(dataPoint => dataPoint.value),
           fill: false,
-          label: `Data for ${selectedAsset.displayName}`
+          label: selectedAsset.displayName
         }]
       },
       options: {
         scales: {
           xAxes: [{
             type: 'time',
+            time: {
+              tooltipFormat: 'YYYY-MM-DD',
+              unit: 'month'
+            },
             distribution: 'series'
           }]
         }
