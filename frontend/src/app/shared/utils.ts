@@ -7,20 +7,20 @@ function _binarySearch(arr: number[] | Date[],
             return lo;
         }
 
-        let guess = Math.floor((hi - lo) / 2);
+        let guess = Math.ceil((hi + lo) / 2);
         if (arr[guess] == target){
             return guess;
         }
         else if (arr[guess] > target){
-            return _binarySearch(arr, target, lo, guess);
+            return _binarySearch(arr, target, lo, guess - 1);
         }
         else{
-            return _binarySearch(arr, target, guess + 1, lo);
+            return _binarySearch(arr, target, guess, hi);
         }
     }   
 
 
 export function binarySearch(arr: number[] | Date[],
     target: number | Date){
-        return _binarySearch(arr, target, 0, arr.length);
+        return _binarySearch(arr, target, 0, arr.length - 1);
     }
