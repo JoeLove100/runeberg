@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common'
 import {Options} from '@angular-slider/ngx-slider'
-import { Subject } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
-import { binarySearch } from '../utils'
+import { binarySearch } from '../utils';
+import { debounce, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-date-slider',
@@ -28,15 +28,6 @@ export class DateSliderComponent implements OnInit{
   constructor() {  }
 
   ngOnInit(){
-    this.allDates = this.allDates.sort((dt1, dt2) => {
-      if (dt1 > dt2) {
-        return 1;
-      }
-      else if (dt1 < dt2){
-        return -1;
-      }
-      return 0;
-    }) 
     
     this.value = 0;
     this.dateInputLoMin = this.formatForInput(this.allDates[this.value])
@@ -46,7 +37,7 @@ export class DateSliderComponent implements OnInit{
       floor: 0,
       ceil: this.allDates.length - 1,
       hideLimitLabels: true,
-      hidePointerLabels: true
+      hidePointerLabels: true   
     };
 
     this.dateInputLo = new FormControl("");
@@ -59,16 +50,20 @@ export class DateSliderComponent implements OnInit{
 
     this.setSelectedDates();
 
-    this.dateInputLo.valueChanges.subscribe(value => {
+    this.dateInputLo.valueChanges.pipe(
+      debounceTime(1500)
+    ).subscribe(value => {
       if(!this.beingUpdated){
-        this.value = 500 //binarySearch(this.allDates, new Date(value));
+        this.value = binarySearch(this.allDates, new Date(value));
         this.setSelectedDates();
       }
     });
 
-    this.dateInputHi.valueChanges.subscribe(value => {
+    this.dateInputHi.valueChanges.pipe(
+      debounceTime(1500)
+    ).subscribe(value => {
       if(!this.beingUpdated){
-        this.highValue = 1200 //binarySearch(this.allDates, new Date(value));
+        this.highValue = binarySearch(this.allDates, new Date(value));
         this.setSelectedDates();
       }
     })
