@@ -14,13 +14,6 @@ export class MarketDataService {
 
   constructor(private http: HttpClient) { }
 
-  getDummyAssets(): Asset[]{
-    return [
-      {name: "Asset A", id: 1, displayName: "Asset A"}, 
-      {name: "Asset B", id: 2, displayName: "Asset B"}, 
-      {name: "Asset C", id: 3, displayName: "Asset C"}]
-  }
-
   allAssets$ = this.http.get<Asset[]>(`${baseUrl}/assets/`).pipe(
     map(assets => {
       return assets.map( asset => new Asset(
@@ -31,8 +24,11 @@ export class MarketDataService {
     })
   )
 
-  getPriceSeriesObservable(assetId: number): Observable<DataPoint[]>{
-    return this.http.get<DataPoint[]>(`${baseUrl}/data/${assetId}?datatype=price&start_date=${dataStart}`).pipe(
+  getPriceSeriesObservable(assetId: number, start?: string): Observable<DataPoint[]>{
+    if(start == null){
+      start = dataStart;
+    }
+    return this.http.get<DataPoint[]>(`${baseUrl}/data/${assetId}?datatype=price&start_date=${start}`).pipe(
       map(dataPoints => {
         let timeSeries =  dataPoints.map(dataPoint => new DataPoint(
           new Date(dataPoint["asofdate"]),
@@ -51,41 +47,4 @@ export class MarketDataService {
       })
     )
   }
-
-  getDummyData(assetId: number): DataPoint[] {
-    if (assetId === 162){
-      return [
-        new PriceDataPoint(new Date(2020, 1, 1), 1),
-        new PriceDataPoint(new Date(2020, 1, 2), 2),
-        new PriceDataPoint(new Date(2020, 1, 3), 3)
-      ]
-    }
-    else if (assetId == 163){
-      return [
-        new PriceDataPoint(new Date(2020, 1, 1), 2),
-        new PriceDataPoint(new Date(2020, 1, 2), 1),
-        new PriceDataPoint(new Date(2020, 1, 3), 3)
-      ]
-    }
-    else{
-      return [
-        new PriceDataPoint(new Date(2020, 1, 1), 3),
-        new PriceDataPoint(new Date(2020, 1, 2), 2),
-        new PriceDataPoint(new Date(2020, 1, 3), 1)
-      ]
-    }
-  }
-}
-
-
-export class PriceDataPoint implements DataPoint{
-  date: Date;
-  value: number;
-
-  constructor(date: Date, 
-    price: number){
-      this.date = date;
-      this.value = price;
-    }
-
 }
