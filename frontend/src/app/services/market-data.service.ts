@@ -28,7 +28,7 @@ export class MarketDataService {
     if(start == null){
       start = dataStart;
     }
-    return this.http.get<DataPoint[]>(`${baseUrl}/data/${assetId}?datatype=price&start_date=${start}`).pipe(
+    return this.http.get<DataPoint[]>(`${baseUrl}/data/${assetId}/?datatype=price&start_date=${start}`).pipe(
       map(dataPoints => {
         let timeSeries =  dataPoints.map(dataPoint => new DataPoint(
           new Date(dataPoint["asofdate"]),

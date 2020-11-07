@@ -99,7 +99,7 @@ describe("Market data service", () => {
             });
 
             // assert
-            const req = httpTestingController.expectOne("http://localhost:8000/dataviewer/api/data/10?datatype=price&start_date=2018-05-01");
+            const req = httpTestingController.expectOne("http://localhost:8000/dataviewer/api/data/10/?datatype=price&start_date=2018-05-01");
             req.flush(DATA);
         })
 
