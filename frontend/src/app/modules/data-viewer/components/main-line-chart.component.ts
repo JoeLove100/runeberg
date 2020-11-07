@@ -1,9 +1,9 @@
 import {  ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { Chart }  from 'chart.js'
-import { BehaviorSubject, EMPTY, combineLatest, from, of, forkJoin } from 'rxjs';
-import { catchError, map, mergeMap, tap, toArray, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, combineLatest, of } from 'rxjs';
+import { catchError, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { LineChartComponent } from 'src/app/shared/components/line-chart.component';
+import { DataPoint } from 'src/app/shared/shared.market-data';
 import { MarketDataService } from '../../../services/market-data.service'
-import { Asset, DataPoint } from '../../../shared/shared.market-data'
 
 @Component({
   selector: 'app-main-line-chart',
@@ -13,8 +13,7 @@ import { Asset, DataPoint } from '../../../shared/shared.market-data'
 })
 export class MainLineChartComponent implements OnInit{
 
-  @ViewChild('lineChart',{static: true}) private lineChartRef: any;
-  chart: any;
+  @ViewChild('lineChart') private chartRef: LineChartComponent;
   selectedId: number;
 
   private assetSelectedSubject = new BehaviorSubject<number>(162);
@@ -43,6 +42,12 @@ export class MainLineChartComponent implements OnInit{
     ))
   )
 
+  selectedDates$ = this.selectedData$.pipe(
+    map(data => {
+      return data.map(dataPoint => dataPoint.date)
+    })
+  )
+
   constructor(private marketDataService: MarketDataService) {   }
 
   ngOnInit(): void {  
@@ -50,47 +55,20 @@ export class MainLineChartComponent implements OnInit{
     this.selectedData$.pipe(
       withLatestFrom(this.selectedAsset$)
     ).subscribe(([data, asset]) => {
-      console.log(`Plotting data for ${asset.displayName}`);
-      this.drawChart(asset, data);
-    })
-
-  }
-
-  drawChart(selectedAsset: Asset,
-    selectedData: DataPoint[]): void{
-
-    if (this.chart){
-      this.chart.destroy()
-    }
-    
-    console.log(`Now drawing chart for ${selectedAsset.displayName}....`)
-    this.chart = new Chart(this.lineChartRef.nativeElement, {
-      type: 'line',
-      data: {
-        labels: selectedData.map(dataPoint => dataPoint.date),
-        datasets: [{
-          data: selectedData.map(dataPoint => dataPoint.value),
-          fill: false,
-          label: selectedAsset.displayName
-        }]
-      },
-      options: {
-        scales: {
-          xAxes: [{
-            type: 'time',
-            time: {
-              tooltipFormat: 'YYYY-MM-DD',
-              unit: 'month'
-            },
-            distribution: 'series'
-          }]
-        }
-      }
+      this.chartRef.drawChart(asset, data);
     })
   }
 
   onSelectedAssetChanged(){
     console.log(this.selectedId)
     this.assetSelectedSubject.next(+this.selectedId)
+  }
+
+  getDatesFromData(data: DataPoint[]): Date[]{
+      return data.map(dataPoint => dataPoint.date);
+  }
+
+  testFunction(data: DataPoint[]): DataPoint[]{
+    return data
   }
 }

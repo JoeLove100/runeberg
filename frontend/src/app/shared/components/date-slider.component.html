@@ -1,20 +1,27 @@
-<div class="container">
+<div class="container" [formGroup]="datesForm">
     <div class="row">
         <div class="col-auto">
             Start:
         </div>
         <div class="col-2">
-            <input type="date" class="form-control" id="datePickerLow">
+            <input type="date" class="form-control" id="datePickerLow"
+            formControlName="dateInputLo"
+            [min]="dateInputLoMin"
+            [max]="dateInputLoMax">
         </div>
         <div class="col-auto">
-            End
+            End:
         </div>
         <div class="col-2">
-            <input type="date" class="form-control" id="datePickerHigh">
+            <input type="date" class="form-control" id="datePickerHigh"
+            formControlName="dateInputHi"
+            [min]="dateInputHiMin"
+            [max]="dateInputHiMax">
         </div>
         <div class="col-6">
                 <ngx-slider [(value)]="value" [(highValue)]="highValue" 
-                [options]="options"></ngx-slider>    
+                [options]="options"
+                (userChangeEnd)="setSelectedDates()"></ngx-slider>    
         </div>
     </div>
 </div>

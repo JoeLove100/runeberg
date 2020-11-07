@@ -1,19 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DateSliderComponent } from './components/date-slider.component'
-import { NgxSliderModule } from '@angular-slider/ngx-slider'
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { LineChartComponent } from './components/line-chart.component'
 
 @NgModule({
-  declarations: [DateSliderComponent],
+  declarations: [
+    DateSliderComponent, 
+    LineChartComponent],
   imports: [
     CommonModule,
-    NgxSliderModule
+    NgxSliderModule,
+    ReactiveFormsModule
   ],
   exports: [
   CommonModule,
   FormsModule,
-  DateSliderComponent
+  DateSliderComponent,
+  LineChartComponent
  ]
 })
 export class SharedModule { }

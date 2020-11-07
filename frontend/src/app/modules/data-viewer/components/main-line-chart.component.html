@@ -1,8 +1,11 @@
 <div style="width: 80%">
-    <canvas #lineChart>{{chart}}</canvas>
     <div>
-        <app-date-slider></app-date-slider>
+        <app-line-chart #lineChart></app-line-chart>
     </div>
+    <ng-container *ngIf="selectedDates$ | async as selectedDates">
+        <app-date-slider #dateSlider
+        [allDates]="selectedDates"></app-date-slider>
+        </ng-container>
     <ng-container *ngIf="availableAssets$ | async as availableAssets">
         <select class="custom-select custom-select-sm"
         [(ngModel)]='selectedId'
