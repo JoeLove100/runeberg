@@ -16,6 +16,7 @@ export class MainLineChartComponent implements OnInit{
 
   @ViewChild('lineChart') private chartRef: LineChartComponent;
   selectedAsset: Asset;
+  selectedData: DataPoint[];
 
   private assetSelectedSubject = new BehaviorSubject<Asset>(new Asset(162, "coal", "Coal"));
   assetSelectedAction$ = this.assetSelectedSubject.asObservable();
@@ -42,8 +43,9 @@ export class MainLineChartComponent implements OnInit{
     
     this.selectedData$.subscribe((data) => {
       if(this.selectedAsset != null){
-        this.dateRangeChangedSubject.next(data.map(dataPoint => dataPoint.date))
-        this.chartRef.drawChart(this.selectedAsset, data);
+        this.selectedData = data;
+        this.dateRangeChangedSubject.next(this.selectedData.map(dataPoint => dataPoint.date));
+        this.redrawChart();
       }
     })
   }
@@ -51,9 +53,9 @@ export class MainLineChartComponent implements OnInit{
   onSelectedAssetChanged(){
     console.log(this.selectedAsset.id)
     this.assetSelectedSubject.next(this.selectedAsset)
-  }
+  };
 
-  getDatesFromData(data: DataPoint[]): Date[]{
-      return data.map(dataPoint => dataPoint.date);
-  }
+  redrawChart(): void{
+    this.chartRef.drawChart(this.selectedAsset, this.selectedData);
+  };
 }
