@@ -1,8 +1,9 @@
 import {  ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, EMPTY, combineLatest, of } from 'rxjs';
-import { catchError, map, mergeMap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, combineLatest, of, Subject } from 'rxjs';
+import { catchError, first, map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
 import { LineChartComponent } from 'src/app/shared/components/line-chart.component';
-import { DataPoint } from 'src/app/shared/shared.market-data';
+import { Asset, DataPoint } from 'src/app/shared/shared.market-data';
+import { isNull } from 'util';
 import { MarketDataService } from '../../../services/market-data.service'
 
 @Component({
@@ -14,10 +15,13 @@ import { MarketDataService } from '../../../services/market-data.service'
 export class MainLineChartComponent implements OnInit{
 
   @ViewChild('lineChart') private chartRef: LineChartComponent;
-  selectedId: number;
+  selectedAsset: Asset;
 
-  private assetSelectedSubject = new BehaviorSubject<number>(162);
+  private assetSelectedSubject = new BehaviorSubject<Asset>(new Asset(162, "coal", "Coal"));
   assetSelectedAction$ = this.assetSelectedSubject.asObservable();
+
+  private dateRangeChangedSubject = new Subject<Date[]>();
+  dateRangeChangedAction$ = this.dateRangeChangedSubject.asObservable();
 
   availableAssets$ = this.marketDataService.allAssets$.pipe(
     catchError(err => {
@@ -26,49 +30,30 @@ export class MainLineChartComponent implements OnInit{
     })
   )
 
-  selectedAsset$ = combineLatest([
-    this.availableAssets$,
-    this.assetSelectedAction$
-  ]).pipe(
-    map(([availableAssets, selectedId]) => {
-      this.selectedId = selectedId;
-      return availableAssets.find(asset => asset.id === selectedId)
-    })
-  )
-
-  selectedData$ = this.selectedAsset$.pipe(
+  selectedData$ = this.assetSelectedAction$.pipe(
     mergeMap(selectedAsset => of(selectedAsset.id).pipe(
       mergeMap(assetId => this.marketDataService.getPriceSeriesObservable(assetId))
     ))
-  )
-
-  selectedDates$ = this.selectedData$.pipe(
-    map(data => {
-      return data.map(dataPoint => dataPoint.date)
-    })
   )
 
   constructor(private marketDataService: MarketDataService) {   }
 
   ngOnInit(): void {  
     
-    this.selectedData$.pipe(
-      withLatestFrom(this.selectedAsset$)
-    ).subscribe(([data, asset]) => {
-      this.chartRef.drawChart(asset, data);
+    this.selectedData$.subscribe((data) => {
+      if(this.selectedAsset != null){
+        this.dateRangeChangedSubject.next(data.map(dataPoint => dataPoint.date))
+        this.chartRef.drawChart(this.selectedAsset, data);
+      }
     })
   }
 
   onSelectedAssetChanged(){
-    console.log(this.selectedId)
-    this.assetSelectedSubject.next(+this.selectedId)
+    console.log(this.selectedAsset.id)
+    this.assetSelectedSubject.next(this.selectedAsset)
   }
 
   getDatesFromData(data: DataPoint[]): Date[]{
       return data.map(dataPoint => dataPoint.date);
-  }
-
-  testFunction(data: DataPoint[]): DataPoint[]{
-    return data
   }
 }
