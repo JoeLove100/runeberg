@@ -1,9 +1,9 @@
-import {  ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, EMPTY, combineLatest, of, Subject } from 'rxjs';
-import { catchError, first, map, mergeMap, tap, withLatestFrom } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, EMPTY, of, Subject } from 'rxjs';
+import { catchError, mergeMap} from 'rxjs/operators';
+import { DateSliderComponent } from 'src/app/shared/components/date-slider.component';
 import { LineChartComponent } from 'src/app/shared/components/line-chart.component';
 import { Asset, DataPoint } from 'src/app/shared/shared.market-data';
-import { isNull } from 'util';
 import { MarketDataService } from '../../../services/market-data.service'
 
 @Component({
@@ -15,6 +15,7 @@ import { MarketDataService } from '../../../services/market-data.service'
 export class MainLineChartComponent implements OnInit{
 
   @ViewChild('lineChart') private chartRef: LineChartComponent;
+  @ViewChild('dateSlider', {static: false}) private dateSliderRef: DateSliderComponent;
   selectedAsset: Asset;
   selectedData: DataPoint[];
 
@@ -45,17 +46,19 @@ export class MainLineChartComponent implements OnInit{
       if(this.selectedAsset != null){
         this.selectedData = data;
         this.dateRangeChangedSubject.next(this.selectedData.map(dataPoint => dataPoint.date));
-        this.redrawChart();
       }
-    })
+    });
   }
 
   onSelectedAssetChanged(){
-    console.log(this.selectedAsset.id)
     this.assetSelectedSubject.next(this.selectedAsset)
   };
 
   redrawChart(): void{
-    this.chartRef.drawChart(this.selectedAsset, this.selectedData);
+    if(this.dateSliderRef != null){
+      const [minDate, maxDate] = this.dateSliderRef.getSelectedDates();
+      let filteredData = this.selectedData.filter(dataPoint => (minDate <= dataPoint.date) && (dataPoint.date <= maxDate))
+      this.chartRef.drawChart(this.selectedAsset, filteredData);
+    }
   };
 }

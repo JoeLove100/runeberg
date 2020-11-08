@@ -4,8 +4,9 @@
     </div>
     <ng-container *ngIf="dateRangeChangedAction$ | async as selectedDates">
         <app-date-slider #dateSlider
-        [allDates]="selectedDates"></app-date-slider>
-        </ng-container>
+        [allDates]="selectedDates"
+        (datesChanged)="redrawChart()"></app-date-slider>
+    </ng-container>
     <ng-container *ngIf="availableAssets$ | async as availableAssets">
         <select class="custom-select custom-select-sm"
         [(ngModel)]='selectedAsset'

@@ -7,7 +7,8 @@
             <input type="date" class="form-control" id="datePickerLow"
             formControlName="dateInputLo"
             [min]="dateInputLoMin"
-            [max]="dateInputLoMax">
+            [max]="dateInputLoMax"
+            (blur)="onDateChangeManual()">
         </div>
         <div class="col-auto">
             End:
@@ -16,7 +17,8 @@
             <input type="date" class="form-control" id="datePickerHigh"
             formControlName="dateInputHi"
             [min]="dateInputHiMin"
-            [max]="dateInputHiMax">
+            [max]="dateInputHiMax"
+            (blur)="onDateChangeManual()">
         </div>
         <div class="col-6">
                 <ngx-slider [(value)]="value" [(highValue)]="highValue" 

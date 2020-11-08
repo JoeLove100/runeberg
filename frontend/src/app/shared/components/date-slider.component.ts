@@ -1,21 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { formatDate } from '@angular/common'
 import {Options} from '@angular-slider/ngx-slider'
 import { FormControl, FormGroup } from '@angular/forms';
 import { binarySearch } from '../utils';
-import { debounce, debounceTime } from 'rxjs/operators';
+import { debounceTime, skipWhile, tap } from 'rxjs/operators';
+import { SimpleChanges } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-date-slider',
   templateUrl: './date-slider.component.html',
   styleUrls: ['./date-slider.component.css']
 })
-export class DateSliderComponent implements OnInit{
+export class DateSliderComponent implements OnInit, OnChanges{
 
   datesForm: FormGroup;
   dateInputLo: FormControl;
   dateInputHi: FormControl;
   @Input() allDates: Date[];
+  @Output() datesChanged = new EventEmitter()
   value: number;
   highValue: number;
   options: Options;
@@ -27,8 +30,41 @@ export class DateSliderComponent implements OnInit{
 
   constructor() {  }
 
+  ngOnChanges(changes: SimpleChanges): void{
+    let dateChange = changes["allDates"]
+    console.log(dateChange)
+    if(!dateChange.firstChange){
+      console.log(`Changes are ${changes}`)
+      this.initialiseForDates()  
+    };
+  }
+
+  private datesChangedSubject = new Subject<Date[]>();
+  datesChangedAction$ = this.datesChangedSubject.asObservable();
+
+
   ngOnInit(){
     
+    this.dateInputLo = new FormControl("");
+    this.dateInputHi = new FormControl("");
+
+    this.datesForm = new FormGroup({
+      dateInputLo: this.dateInputLo,
+      dateInputHi: this.dateInputHi
+    })
+
+    this.initialiseForDates();
+
+    this.datesChangedAction$.subscribe(dates => {
+        let [loDate, hiDate] = dates;
+        this.value = binarySearch(this.allDates, new Date(loDate))
+        this.highValue = binarySearch(this.allDates, new Date(hiDate))
+        console.log(`New slider values are ${this.value} and ${this.highValue} now`)
+        this.setSelectedDates();
+    })
+  };
+
+  initialiseForDates(): void{
     this.value = 0;
     this.dateInputLoMin = this.formatForInput(this.allDates[this.value])
     this.highValue = this.allDates.length - 1;
@@ -39,36 +75,14 @@ export class DateSliderComponent implements OnInit{
       hideLimitLabels: true,
       hidePointerLabels: true   
     };
-
-    this.dateInputLo = new FormControl("");
-    this.dateInputHi = new FormControl("");
-
-    this.datesForm = new FormGroup({
-      dateInputLo: this.dateInputLo,
-      dateInputHi: this.dateInputHi
-    })
-
     this.setSelectedDates();
+  }
 
-    this.dateInputLo.valueChanges.pipe(
-      debounceTime(1500)
-    ).subscribe(value => {
-      if(!this.beingUpdated){
-        this.value = binarySearch(this.allDates, new Date(value));
-        this.setSelectedDates();
-      }
-    });
-
-    this.dateInputHi.valueChanges.pipe(
-      debounceTime(1500)
-    ).subscribe(value => {
-      if(!this.beingUpdated){
-        this.highValue = binarySearch(this.allDates, new Date(value));
-        this.setSelectedDates();
-      }
-    })
-
-  };
+  onDateChangeManual(): void{
+    console.log("Manual date change occurred")
+    let dates = [this.dateInputLo.value, this.dateInputHi.value]
+    this.datesChangedSubject.next(dates);
+  }
 
   getSelectedDates(): Date[]{
     let minDate = this.allDates[this.value];
@@ -93,6 +107,8 @@ export class DateSliderComponent implements OnInit{
     this.dateInputLoMax = this.formatForInput(hiDate)
 
     this.beingUpdated = false;
+    
+    this.datesChanged.emit();
   }
 
 }
