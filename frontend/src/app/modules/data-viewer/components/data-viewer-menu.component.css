@@ -1,0 +1,20 @@
+.card {
+    height: 100%
+}
+
+.btn-group {
+    width: 100%;
+    padding: 10px 10px 10px 10px
+}
+
+.form-group {
+    padding: 10px 10px 10px 10px
+}
+
+label {
+    padding-right: 10px;
+}
+
+select {
+    width: 60%;
+}
