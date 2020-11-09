@@ -7,11 +7,16 @@
             <form class="form-inline">
                 <div class="form-group">
                     <label for="nameId">Asset:</label>
-                    <select id="selector">
-                    <option>Option 1 Long Name</option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                </select>
+                    <ng-container *ngIf="availableAssets$ | async as availableAssets">
+                        <select class="custom-select custom-select-sm"
+                        [(ngModel)]='selectedAsset'
+                        (change)="onSelectedAssetChanged()">
+                            <option *ngFor="let asset of availableAssets"
+                            [ngValue]="asset">
+                            {{ asset.displayName }}
+                            </option>
+                        </select>
+                    </ng-container>                
                 </div>
                 </form>
                 <form class="form-inline">
