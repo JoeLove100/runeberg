@@ -1,6 +1,7 @@
 import { Chart } from 'chart.js'
-import { Component, ViewChild } from '@angular/core';
-import { Asset, DataPoint } from '../../shared/shared.market-data'
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { DataPoint } from '../../shared/shared.market-data'
+import { LineChartSettings } from 'src/app/modules/data-viewer/components/data-viewer-menu.component';
 
 @Component({
   selector: 'app-line-chart',
@@ -15,14 +16,14 @@ export class LineChartComponent {
   constructor() { }
 
   
-  drawChart(selectedAsset: Asset,
+  drawChart(chartSettings: LineChartSettings,
     selectedData: DataPoint[]): void{
 
     if (this.chart){
       this.chart.destroy()
     }
     
-    console.log(`Now drawing chart for ${selectedAsset.displayName}....`)
+    console.log(`Now drawing chart for ${chartSettings.selectedAsset.displayName}....`)
     this.chart = new Chart(this.lineChartRef.nativeElement, {
       type: 'line',
       data: {
@@ -30,7 +31,7 @@ export class LineChartComponent {
         datasets: [{
           data: selectedData.map(dataPoint => dataPoint.value),
           fill: false,
-          label: selectedAsset.displayName
+          label: chartSettings.selectedAsset.displayName
         }]
       },
       options: {
