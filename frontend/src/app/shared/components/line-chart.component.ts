@@ -2,6 +2,7 @@ import { Chart } from 'chart.js'
 import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { DataPoint } from '../../shared/shared.market-data'
 import { LineChartSettings } from 'src/app/modules/data-viewer/components/data-viewer-menu.component';
+import { priceToCumulativeReturns } from '../utils'
 
 @Component({
   selector: 'app-line-chart',
@@ -21,6 +22,10 @@ export class LineChartComponent {
 
     if (this.chart){
       this.chart.destroy()
+    }
+
+    if(chartSettings.showReturns){
+      selectedData = priceToCumulativeReturns(selectedData);
     }
     
     console.log(`Now drawing chart for ${chartSettings.selectedAsset.displayName}....`)
@@ -43,8 +48,19 @@ export class LineChartComponent {
               unit: 'month'
             },
             distribution: 'series'
-          }]
-        }
+          }],
+          yAxes: [{
+            ticks: {
+              callback: (tick: number) => {
+                if(chartSettings.showReturns){
+                  return (tick * 100).toString() + "%"
+                }
+                else{
+                  return tick.toString();
+                }
+              }
+            }
+          }]}
       }
     })
   }

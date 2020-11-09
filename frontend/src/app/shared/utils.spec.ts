@@ -1,4 +1,5 @@
-import { binarySearch } from './utils'
+import { DataPoint } from './shared.market-data';
+import { binarySearch, priceToCumulativeReturns, priceToReturns } from './utils'
 
 
 describe("Utility functions", ()=> {
@@ -75,4 +76,71 @@ describe("Utility functions", ()=> {
     });
 
     });
+
+    describe("Prices to return", () => {
+
+        it("Should return an empty array for an input of length 1", () => {
+            // arrange
+            const arr = [new DataPoint(new Date(2020, 1, 31), 10)];
+
+            // act
+            const result = priceToReturns(arr);
+
+            // assert
+            expect(result.length).toBe(0);
+        });
+
+        it(`Should return an array defined on all dates in the input save the first`, () => {
+            // arrange
+            const arr = [
+                new DataPoint(new Date(2020, 1, 31), 10),
+                new DataPoint(new Date(2020, 2, 28), 12),
+                new DataPoint(new Date(2020, 3, 31), 9)
+            ];
+
+            // act
+            let result = priceToReturns(arr);
+            let resultDates = result.map(dataPoint => dataPoint.date);
+
+            // assert
+            expect(resultDates).toEqual([new Date(2020, 2, 28), new Date(2020, 3, 31)]);
+        });
+
+        it(`Should calculate the % returns for inputs > length 1`, () => {
+            // arrange
+            const arr = [
+                new DataPoint(new Date(2020, 1, 31), 10),
+                new DataPoint(new Date(2020, 2, 28), 12),
+                new DataPoint(new Date(2020, 3, 31), 9)
+            ];
+            
+            // act
+            let result = priceToReturns(arr);
+            let resultValues = result.map(dataPoint => dataPoint.value);
+
+            // assert
+            expect(resultValues[0]).toBeCloseTo(0.2)
+            expect(resultValues[1]).toBeCloseTo(-0.25)
+        });
+    })
+
+    describe("Price to cumulative return", () => {
+
+        it("should return % cumulative returns based on the input prices", () =>{
+            // arrange
+            const arr = [
+                new DataPoint(new Date(2020, 1, 31), 10),
+                new DataPoint(new Date(2020, 2, 28), 12),
+                new DataPoint(new Date(2020, 3, 31), 9)
+            ];
+
+            // act
+            let result = priceToCumulativeReturns(arr);
+            let resultValues = result.map(dataPoint => dataPoint.value);
+
+            // assert
+            expect(resultValues[0]).toBeCloseTo(0.2);
+            expect(resultValues[1]).toBeCloseTo(-0.1);
+        })
+    })
 }) 
