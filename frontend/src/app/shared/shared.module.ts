@@ -12,11 +12,13 @@ import { LineChartComponent } from './components/line-chart.component'
   imports: [
     CommonModule,
     NgxSliderModule,
+    FormsModule,
     ReactiveFormsModule
   ],
   exports: [
   CommonModule,
   FormsModule,
+  ReactiveFormsModule,
   DateSliderComponent,
   LineChartComponent
  ]

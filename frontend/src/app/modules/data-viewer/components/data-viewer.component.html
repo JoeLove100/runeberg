@@ -4,7 +4,8 @@
             <app-main-line-chart></app-main-line-chart>
         </div>
         <div class="col-sm-3 padding-0">
-            <app-data-viewer-menu></app-data-viewer-menu>
+            <app-data-viewer-menu
+            (settingsChanged)="onChartSettingsChanged()"></app-data-viewer-menu>
         </div>
     </div>
 </div>

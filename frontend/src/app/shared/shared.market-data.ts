@@ -10,6 +10,20 @@ export class Asset{
             this.name = name;
             this.displayName = displayName;
         }
+
+    isEqualTo(other: Asset): boolean{
+
+        if(this.id != other.id){
+            return false;
+        }
+        if(this.name != other.name){
+            return false;
+        }
+        if(this.displayName != other.displayName){
+            return false;
+        }
+        return true;
+    }
 }
 
 export class DataPoint{

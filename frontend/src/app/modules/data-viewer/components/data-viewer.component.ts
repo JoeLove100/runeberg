@@ -12,4 +12,7 @@ export class DataViewerComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onChartSettingsChanged(){
+    console.log("Detected a change in the chart settings")
+  }
 }
