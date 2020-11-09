@@ -57,3 +57,18 @@ export function priceToCumulativeReturns(prices: DataPoint[]): DataPoint[] {
     };
 
 }
+
+export class DateHelper{
+
+    static getPrevMonthEnd(date: Date): Date{
+        return new Date(date.getFullYear(), date.getMonth(), 0);
+    }
+
+    static getPrevQuarterEnd(date: Date): Date{
+        return new Date(date.getFullYear(), Math.floor(date.getMonth() / 3) * 3, 0);
+    }
+
+    static getPrevYearEnd(date: Date): Date{
+        return new Date(date.getFullYear(), 0, 0);
+    }
+}

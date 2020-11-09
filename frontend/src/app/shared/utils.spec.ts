@@ -1,5 +1,5 @@
 import { DataPoint } from './shared.market-data';
-import { binarySearch, priceToCumulativeReturns, priceToReturns } from './utils'
+import { binarySearch, DateHelper, priceToCumulativeReturns, priceToReturns } from './utils'
 
 
 describe("Utility functions", ()=> {
@@ -141,6 +141,42 @@ describe("Utility functions", ()=> {
             // assert
             expect(resultValues[0]).toBeCloseTo(0.2);
             expect(resultValues[1]).toBeCloseTo(-0.1);
-        })
+        });
+    });
+
+    describe("Date helper", () => {
+
+        it("should return previous month end when getPrevMonthEnd called", () => {
+            // arrange
+            let date = new Date(2020, 4, 14);
+
+            // act
+            let result = DateHelper.getPrevMonthEnd(date);
+
+            // assert
+            expect(result).toEqual(new Date(2020, 3, 30))
+        });
+
+        it("should return previous quarter end when getPrevQuarterEnd called", () => {
+            // arrange
+            let date = new Date(2020, 10, 15);
+
+            // act
+            let result = DateHelper.getPrevQuarterEnd(date);
+
+            // assert
+            expect(result).toEqual(new Date(2020, 8, 30));
+        });
+
+        it("should return previous year end when getPrevYearEnd called", () => {
+            // arrange
+            let date = new Date(2020, 5, 20);
+
+            // act
+            let result = DateHelper.getPrevYearEnd(date);
+
+            // assert
+            expect(result).toEqual(new Date(2019, 11, 31));
+        });
     })
 }) 
