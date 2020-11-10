@@ -55,5 +55,8 @@ export class MainLineChartComponent implements OnInit{
       let filteredData = this.selectedData.filter(dataPoint => (minDate <= dataPoint.date) && (dataPoint.date <= maxDate))
       this.chartRef.drawChart(this.chartSettings, filteredData);
     }
+    else{
+      this.chartRef.drawChart(this.chartSettings, this.selectedData);
+    }
   };
 }
