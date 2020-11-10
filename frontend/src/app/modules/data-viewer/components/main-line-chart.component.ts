@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, EMPTY, of, Subject } from 'rxjs';
-import { catchError, mergeMap} from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { mergeMap} from 'rxjs/operators';
 import { DateSliderComponent } from 'src/app/shared/components/date-slider.component';
 import { LineChartComponent } from 'src/app/shared/components/line-chart.component';
 import { Asset, DataPoint } from 'src/app/shared/shared.market-data';
@@ -17,8 +17,8 @@ export class MainLineChartComponent implements OnInit{
 
   @ViewChild('lineChart') private chartRef: LineChartComponent;
   @ViewChild('dateSlider') private dateSliderRef: DateSliderComponent;
-  chartSettings: LineChartSettings;
   selectedData: DataPoint[];
+  private _currentChartSettings: LineChartSettings; 
 
   private settingsChangedSubject = new Subject<LineChartSettings>();
   settingsChangedAction$ = this.settingsChangedSubject.asObservable();
@@ -26,8 +26,11 @@ export class MainLineChartComponent implements OnInit{
   private dateRangeChangedSubject = new Subject<Date[]>();
   dateRangeChangedAction$ = this.dateRangeChangedSubject.asObservable();
 
-  selectedData$ = this.settingsChangedAction$.pipe(
-    mergeMap(lineChartSettings => of(lineChartSettings.selectedAsset.id).pipe(
+  private assetChangedSubject = new Subject<Asset>();
+  assetChangedAction$ = this.assetChangedSubject.asObservable();
+
+  selectedData$ = this.assetChangedAction$.pipe(
+    mergeMap(asset => of(asset.id).pipe(
       mergeMap(assetId => this.marketDataService.getPriceSeriesObservable(assetId))
     ))
   )
@@ -37,26 +40,37 @@ export class MainLineChartComponent implements OnInit{
   ngOnInit(): void {  
     
     this.selectedData$.subscribe((data) => {
-      if(this.chartSettings.selectedAsset != null){
+      if(this._currentChartSettings.selectedAsset != null){
         this.selectedData = data;
         this.dateRangeChangedSubject.next(this.selectedData.map(dataPoint => dataPoint.date));
       }
     });
+
+    this.settingsChangedAction$.subscribe(settings => {
+      this._currentChartSettings = settings;
+      this.redrawChart();
+    })
   }
 
   redrawForSettings(chartSettings: LineChartSettings): void{
-    this.chartSettings = chartSettings;
-    this.settingsChangedSubject.next(chartSettings);
+    if((this._currentChartSettings == null) || 
+      (!this._currentChartSettings.selectedAsset.isEqualTo(chartSettings.selectedAsset))){
+        this._currentChartSettings = chartSettings;
+        this.assetChangedSubject.next(this._currentChartSettings.selectedAsset);
+    }
+    else{
+        this.settingsChangedSubject.next(chartSettings);
+    }
   }
 
   private redrawChart(): void{
     if(this.dateSliderRef != null){
       const [minDate, maxDate] = this.dateSliderRef.getSelectedDates();
       let filteredData = this.selectedData.filter(dataPoint => (minDate <= dataPoint.date) && (dataPoint.date <= maxDate))
-      this.chartRef.drawChart(this.chartSettings, filteredData);
+      this.chartRef.drawChart(this._currentChartSettings, filteredData);
     }
     else{
-      this.chartRef.drawChart(this.chartSettings, this.selectedData);
+      this.chartRef.drawChart(this._currentChartSettings, this.selectedData);
     }
   };
 }

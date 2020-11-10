@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { map, tap } from 'rxjs/operators'
+import { map, shareReplay, tap } from 'rxjs/operators'
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Asset, DataPoint } from '../shared/shared.market-data';
