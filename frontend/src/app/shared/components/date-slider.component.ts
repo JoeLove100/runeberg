@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
 import { formatDate } from '@angular/common'
 import {Options} from '@angular-slider/ngx-slider'
 import { FormControl, FormGroup } from '@angular/forms';
-import { binarySearch } from '../utils';
-import { debounceTime, skipWhile, tap } from 'rxjs/operators';
+import { binarySearch, DateHelper } from '../utils';
 import { SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -26,7 +25,9 @@ export class DateSliderComponent implements OnInit, OnChanges{
   dateInputLoMax: string;
   dateInputHiMin: string;
   dateInputHiMax: string;
-  private beingUpdated: boolean;
+  public get datePeriod(): typeof DatePeriod {
+    return DatePeriod
+  }
 
   constructor() {  }
 
@@ -79,9 +80,37 @@ export class DateSliderComponent implements OnInit, OnChanges{
   }
 
   onDateChangeManual(): void{
-    console.log("Manual date change occurred")
     let dates = [this.dateInputLo.value, this.dateInputHi.value]
     this.datesChangedSubject.next(dates);
+  }
+
+  onPeriodButtonClicked(period: DatePeriod): void{
+
+    console.log("button pushed")
+    this.highValue = this.allDates.length - 1
+    let endDate = this.allDates[this.highValue];
+    switch(period){
+      case DatePeriod.MTD: {
+        let startDate = DateHelper.getPrevMonthEnd(endDate);
+        this.value = binarySearch(this.allDates, startDate);
+        break;
+      }
+      case DatePeriod.QTD: {
+        let startDate = DateHelper.getPrevQuarterEnd(endDate);
+        this.value = binarySearch(this.allDates, startDate);
+        break;
+      }
+      case DatePeriod.YTD: {
+        let startDate = DateHelper.getPrevYearEnd(endDate);
+        this.value = binarySearch(this.allDates, startDate);
+        break;
+      }
+      case DatePeriod.MAX: {
+        this.value = 0
+      }
+
+    }
+    this.setSelectedDates();
   }
 
   getSelectedDates(): Date[]{
@@ -96,8 +125,6 @@ export class DateSliderComponent implements OnInit, OnChanges{
 
   setSelectedDates(): void{
 
-    this.beingUpdated = true;
-
     let loDate = this.allDates[this.value];
     this.dateInputLo.setValue(this.formatForInput(loDate));
     this.dateInputHiMin = this.formatForInput(loDate)
@@ -106,9 +133,15 @@ export class DateSliderComponent implements OnInit, OnChanges{
     this.dateInputHi.setValue(this.formatForInput(hiDate))
     this.dateInputLoMax = this.formatForInput(hiDate)
 
-    this.beingUpdated = false;
-    
     this.datesChanged.emit();
   }
 
+}
+
+
+enum DatePeriod {
+  MTD,
+  QTD,
+  YTD,
+  MAX
 }

@@ -1,9 +1,16 @@
 <div class="container" [formGroup]="datesForm">
     <div class="row">
+        <div class="col-sm-12">
+            <ngx-slider [(value)]="value" [(highValue)]="highValue" 
+            [options]="options"
+            (userChangeEnd)="setSelectedDates()"></ngx-slider>    
+        </div>
+    </div>
+    <div class="row">
         <div class="col-auto">
             Start:
         </div>
-        <div class="col-2">
+        <div class="col-sm-3">
             <input type="date" class="form-control" id="datePickerLow"
             formControlName="dateInputLo"
             [min]="dateInputLoMin"
@@ -13,18 +20,23 @@
         <div class="col-auto">
             End:
         </div>
-        <div class="col-2">
+        <div class="col-sm-3">
             <input type="date" class="form-control" id="datePickerHigh"
             formControlName="dateInputHi"
             [min]="dateInputHiMin"
             [max]="dateInputHiMax"
             (blur)="onDateChangeManual()">
         </div>
-        <div class="col-6">
-                <ngx-slider [(value)]="value" [(highValue)]="highValue" 
-                [options]="options"
-                (userChangeEnd)="setSelectedDates()"></ngx-slider>    
-        </div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-secondary"
+            (click)="onPeriodButtonClicked(datePeriod.MAX)">Max</button>
+            <button type="button" class="btn btn-secondary"
+            (click)="onPeriodButtonClicked(datePeriod.YTD)">YTD</button>
+            <button type="button" class="btn btn-secondary"
+            (click)="onPeriodButtonClicked(datePeriod.QTD)">QTD</button>
+            <button type="button" class="btn btn-secondary"
+            (click)="onPeriodButtonClicked(datePeriod.MTD)">MTD</button>
+          </div>
     </div>
 </div>
 
