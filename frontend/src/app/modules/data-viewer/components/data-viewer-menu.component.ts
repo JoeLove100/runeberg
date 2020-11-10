@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject, EMPTY } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Asset } from 'src/app/shared/shared.market-data';
 import { MarketDataService } from '../../../services/market-data.service'
@@ -11,7 +11,7 @@ import { MarketDataService } from '../../../services/market-data.service'
   templateUrl: './data-viewer-menu.component.html',
   styleUrls: ['./data-viewer-menu.component.css']
 })
-export class DataViewerMenuComponent implements OnInit {
+export class DataViewerMenuComponent implements OnInit, OnDestroy {
 
   rootForm: FormGroup;
   assetSelectFormControl = new FormControl("");
@@ -19,6 +19,7 @@ export class DataViewerMenuComponent implements OnInit {
  @Output() settingsChanged = new EventEmitter();
   private _settings: LineChartSettings;
   allAssets: Asset[]
+  assetSub: Subscription;
 
   private assetSelectedSubject = new BehaviorSubject<Asset>(new Asset(162, "coal", "Coal"));
   assetSelectedAction$ = this.assetSelectedSubject.asObservable();
@@ -39,9 +40,13 @@ export class DataViewerMenuComponent implements OnInit {
       showReturns: this.showReturnsCheckoxControl
     });
 
-    this.availableAssets$.subscribe(assets => {this.allAssets = assets
+    this.assetSub = this.availableAssets$.subscribe(assets => {this.allAssets = assets
     this.assetSelectFormControl.setValue(assets[0])
     this.onSettingsChangedEvent()})
+  }
+
+  ngOnDestroy(): void{
+    this.assetSub.unsubscribe();
   }
 
   private getSettingsFromControls(): LineChartSettings{
