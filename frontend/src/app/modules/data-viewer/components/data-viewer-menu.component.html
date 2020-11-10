@@ -7,11 +7,11 @@
             <form class="form-inline">
                 <div class="form-group" [formGroup]="rootForm">
                     <label for="nameId">Asset:</label>
-                    <ng-container *ngIf="availableAssets$ | async as availableAssets">
+                    <ng-container>
                         <select class="custom-select custom-select-sm"
                         formControlName="assetSelect"
                         (change)="onSettingsChangedEvent()">
-                            <option *ngFor="let asset of availableAssets"
+                            <option *ngFor="let asset of allAssets"
                             [ngValue]="asset">
                             {{ asset.displayName }}
                             </option>

@@ -18,6 +18,7 @@ export class DataViewerMenuComponent implements OnInit {
   showReturnsCheckoxControl = new FormControl("");
  @Output() settingsChanged = new EventEmitter();
   private _settings: LineChartSettings;
+  allAssets: Asset[]
 
   private assetSelectedSubject = new BehaviorSubject<Asset>(new Asset(162, "coal", "Coal"));
   assetSelectedAction$ = this.assetSelectedSubject.asObservable();
@@ -36,7 +37,11 @@ export class DataViewerMenuComponent implements OnInit {
     this.rootForm = new FormGroup({
       assetSelect: this.assetSelectFormControl,
       showReturns: this.showReturnsCheckoxControl
-    })
+    });
+
+    this.availableAssets$.subscribe(assets => {this.allAssets = assets
+    this.assetSelectFormControl.setValue(assets[0])
+    this.onSettingsChangedEvent()})
   }
 
   private getSettingsFromControls(): LineChartSettings{
