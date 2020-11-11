@@ -1,8 +1,8 @@
 from django_filters import rest_framework as filters
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView
-from dataviewer.serializers import IndexSerializer, AssetSerializer, HistoricDataSerializer
-from dataviewer.models import Indices, Assets, HistoricData
+from dataviewer.serializers import IndexSerializer, AssetSerializer, HistoricDataSerializer, IndexHistoricPricesSerializer
+from dataviewer.models import Indices, Assets, HistoricData, IndexHistoricPrices
 from django.views.generic.base import TemplateView
 
 
@@ -37,6 +37,21 @@ class HistoricDataView(ListAPIView):
         return HistoricData.objects.filter(assetid=asset_id)
 
 
-class DataChartView(TemplateView):
+class HistoricIndexDataFilter(filters.FilterSet):
+    start_date = filters.DateFilter(field_name="asofdate", lookup_expr="gte")
+    end_date = filters.DateFilter(field_name="asofdate", lookup_expr="lte")
 
-    template_name = "dataviewer/data_chart.html"
+    class Meta:
+        model = IndexHistoricPrices
+        fields = "__all__"
+
+
+class HistoricIndexDataView(ListAPIView):
+    serializer_class = IndexHistoricPricesSerializer
+    queryset = IndexHistoricPrices.objects.all()
+    filterset_class = HistoricIndexDataFilter
+
+    def get_queryset(self):
+
+        index_id = self.kwargs["index_id"]
+        return IndexHistoricPrices.objects.filter(indexid=index_id)

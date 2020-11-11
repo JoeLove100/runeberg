@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from dataviewer.models import Assets, Indices, HistoricData
+from dataviewer.models import Assets, Indices, HistoricData, IndexHistoricPrices
 
 
 class AssetSerializer(ModelSerializer):
@@ -18,3 +18,8 @@ class HistoricDataSerializer(ModelSerializer):
     class Meta:
         model = HistoricData
         fields = "__all__"
+
+class IndexHistoricPricesSerializer(ModelSerializer):
+    class Meta:
+        model = IndexHistoricPrices
+        fields = ["asofdate", "indexid", "datavalue"]      
