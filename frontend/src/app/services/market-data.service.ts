@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs'
-import { map, shareReplay, tap } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { Asset, DataPoint } from '../shared/shared.market-data';
+import { Asset, DataPoint, Index } from '../shared/shared.market-data';
 
 const baseUrl = "http://localhost:8000/dataviewer/api"
 const dataStart = "2015-01-01"
@@ -20,15 +20,22 @@ export class MarketDataService {
         +asset["assetid"],
         asset["assetname"],
         asset["assetdisplayname"]
-      ))
+      ));
     })
-  )
+  );
 
-  getPriceSeriesObservable(assetId: number, start?: string): Observable<DataPoint[]>{
-    if(start == null){
-      start = dataStart;
-    }
-    return this.http.get<DataPoint[]>(`${baseUrl}/data/${assetId}/?datatype=price&start_date=${start}`).pipe(
+  allIndices$ = this.http.get<Index[]>(`${baseUrl}/indices/`).pipe(
+    map(indices => {
+      return indices.map(index => new Index(
+        +index["indexid"],
+        index["indexname"],
+        index["indexdisplayname"]
+      ));
+    })
+  );
+
+  private getPriceSeriesObservable(assetId: number, start: string, url: string): Observable<DataPoint[]>{
+    return this.http.get<DataPoint[]>(url).pipe(
       map(dataPoints => {
         let timeSeries =  dataPoints.map(dataPoint => new DataPoint(
           new Date(dataPoint["asofdate"]),
@@ -46,5 +53,21 @@ export class MarketDataService {
         return timeSeries
       })
     )
+  };
+
+  getAssetPriceSeriesObservable(assetId: number, start?: string): Observable<DataPoint[]>{
+    if(start == null){
+      start = dataStart;
+    }
+    let url = `${baseUrl}/data/${assetId}/?datatype=price&start_date=${start}`;
+    return this.getPriceSeriesObservable(assetId, start, url);
+  }
+
+  getIndexPriceSeriesObservable(indexId: number, start?: string): Observable<DataPoint[]>{
+    if(start == null){
+      start = dataStart;
+    }
+    let url = `${baseUrl}/index_data/${indexId}/?start_date=${start}`;
+    return this.getPriceSeriesObservable(indexId, start, url);
   }
 }

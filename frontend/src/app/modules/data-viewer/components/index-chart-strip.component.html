@@ -1,0 +1,8 @@
+<div class="container">
+    <ng-container class="row" *ngIf="indices$ | async as indices">
+        <div class="col" *ngFor="let index of indices">
+            Testing
+        </div>
+    </ng-container>
+</div>
+

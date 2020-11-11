@@ -31,7 +31,7 @@ export class MainLineChartComponent implements OnInit{
 
   selectedData$ = this.assetChangedAction$.pipe(
     mergeMap(asset => of(asset.id).pipe(
-      mergeMap(assetId => this.marketDataService.getPriceSeriesObservable(assetId))
+      mergeMap(assetId => this.marketDataService.getAssetPriceSeriesObservable(assetId))
     ))
   )
 
