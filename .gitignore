@@ -4,3 +4,4 @@ __pycache__/
 */secrets.json
 db.sqlite3
 .vscode
+node_modules/

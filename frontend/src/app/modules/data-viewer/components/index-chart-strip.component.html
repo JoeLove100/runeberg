@@ -1,8 +1,10 @@
-<div class="container">
-    <ng-container class="row" *ngIf="indices$ | async as indices">
-        <div class="col" *ngFor="let index of indices">
-            Testing
+<div class="container-fluid padding-0">
+    <ng-container *ngIf="indices$ | async as indices">
+        <div class="row padding-0">
+            <div class="col-md-2 border-right" *ngFor="let index of indices">
+                <app-line-chart-card 
+                [asset]="index"></app-line-chart-card>
+            </div>
         </div>
     </ng-container>
 </div>
-

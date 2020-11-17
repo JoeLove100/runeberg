@@ -65,9 +65,9 @@ describe("Market data service", () => {
 
         it("should call http get with the right url, id and start date", () => {
             // arrange/act
-            let testId = 10;
+            let testAsset = new Asset(10, "test_asset", "Test Asset");
             let testStartDate = "2018-05-01"
-            marketDataService.getPriceSeriesObservable(testId, testStartDate).subscribe();
+            marketDataService.getAssetPriceSeriesObservable(testAsset, testStartDate).subscribe();
             
             // assert
             const req = httpTestingController.expectOne("http://localhost:8000/dataviewer/api/data/10/?datatype=price&start_date=2018-05-01");
@@ -78,7 +78,7 @@ describe("Market data service", () => {
 
         it("should return sorted list of data points", () => {
             // arrange/act
-            let testId = 10;
+            let testAsset = new Asset(10, "test_asset", "Test Asset");
             let testStartDate = "2018-05-01"
             const DATA = 
             [
@@ -92,9 +92,9 @@ describe("Market data service", () => {
                 new DataPoint(new Date("2020-01-31"), 50),
                 new DataPoint(new Date("2020-02-10"), 20)
             ]
-            marketDataService.getPriceSeriesObservable(testId, testStartDate).subscribe(arr => {
+            marketDataService.getAssetPriceSeriesObservable(testAsset, testStartDate).subscribe(arr => {
                 for(let i = 0; i < 3; i++){
-                    expect(arr[i]).toEqual(EXPECTED[i]);
+                    expect(arr.data[i]).toEqual(EXPECTED[i]);
                 }
             });
 

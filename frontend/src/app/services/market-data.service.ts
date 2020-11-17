@@ -2,7 +2,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { Asset, DataPoint, Index } from '../shared/shared.market-data';
+import { Asset, DataPoint } from '../shared/shared.market-data';
 
 const baseUrl = "http://localhost:8000/dataviewer/api"
 const dataStart = "2015-01-01"
@@ -24,9 +24,9 @@ export class MarketDataService {
     })
   );
 
-  allIndices$ = this.http.get<Index[]>(`${baseUrl}/indices/`).pipe(
+  allIndices$ = this.http.get<Asset[]>(`${baseUrl}/indices/`).pipe(
     map(indices => {
-      return indices.map(index => new Index(
+      return indices.map(index => new Asset(
         +index["indexid"],
         index["indexname"],
         index["indexdisplayname"]
@@ -34,9 +34,9 @@ export class MarketDataService {
     })
   );
 
-  private getPriceSeriesObservable(assetId: number, start: string, url: string): Observable<DataPoint[]>{
+  private getPriceSeriesObservable(asset: Asset, url: string): Observable<Asset>{
     return this.http.get<DataPoint[]>(url).pipe(
-      map(dataPoints => {
+      map<DataPoint[], Asset>(dataPoints => {
         let timeSeries =  dataPoints.map(dataPoint => new DataPoint(
           new Date(dataPoint["asofdate"]),
           +dataPoint["datavalue"]
@@ -50,24 +50,25 @@ export class MarketDataService {
           }
           return 0
         })
-        return timeSeries
+        asset.data = timeSeries
+        return asset
       })
     )
   };
 
-  getAssetPriceSeriesObservable(assetId: number, start?: string): Observable<DataPoint[]>{
+  getAssetPriceSeriesObservable(asset: Asset, start?: string): Observable<Asset>{
     if(start == null){
       start = dataStart;
     }
-    let url = `${baseUrl}/data/${assetId}/?datatype=price&start_date=${start}`;
-    return this.getPriceSeriesObservable(assetId, start, url);
+    let url = `${baseUrl}/data/${asset.id}/?datatype=price&start_date=${start}`;
+    return this.getPriceSeriesObservable(asset, url);
   }
 
-  getIndexPriceSeriesObservable(indexId: number, start?: string): Observable<DataPoint[]>{
+  getIndexPriceSeriesObservable(index: Asset, start?: string): Observable<Asset>{
     if(start == null){
       start = dataStart;
     }
-    let url = `${baseUrl}/index_data/${indexId}/?start_date=${start}`;
-    return this.getPriceSeriesObservable(indexId, start, url);
+    let url = `${baseUrl}/index_data/${index.id}/?start_date=${start}`;
+    return this.getPriceSeriesObservable(index, url);
   }
 }

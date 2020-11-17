@@ -4,6 +4,7 @@ import { DataViewerComponent } from './components/data-viewer.component';
 import { MainLineChartComponent } from './components/main-line-chart.component';
 import { DataViewerMenuComponent } from './components/data-viewer-menu.component';
 import { IndexChartStripComponent } from './components/index-chart-strip.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: 
@@ -15,7 +16,8 @@ import { IndexChartStripComponent } from './components/index-chart-strip.compone
   ],
   imports: 
   [
-    SharedModule
+    SharedModule,
+    FlexLayoutModule
   ],
   exports:
   [

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { merge, of, Subject } from 'rxjs';
 import { mergeMap} from 'rxjs/operators';
 import { DateSliderComponent } from 'src/app/shared/components/date-slider.component';
 import { LineChartComponent } from 'src/app/shared/components/line-chart.component';
@@ -17,7 +17,7 @@ export class MainLineChartComponent implements OnInit{
 
   @ViewChild('lineChart') private chartRef: LineChartComponent;
   @ViewChild('dateSlider') private dateSliderRef: DateSliderComponent;
-  selectedData: DataPoint[];
+  selectedAsset: Asset;
   private _currentChartSettings: LineChartSettings; 
 
   private settingsChangedSubject = new Subject<LineChartSettings>();
@@ -30,19 +30,17 @@ export class MainLineChartComponent implements OnInit{
   assetChangedAction$ = this.assetChangedSubject.asObservable();
 
   selectedData$ = this.assetChangedAction$.pipe(
-    mergeMap(asset => of(asset.id).pipe(
-      mergeMap(assetId => this.marketDataService.getAssetPriceSeriesObservable(assetId))
-    ))
+    mergeMap(asset => this.marketDataService.getAssetPriceSeriesObservable(asset))
   )
 
   constructor(private marketDataService: MarketDataService) {   }
 
   ngOnInit(): void {  
     
-    this.selectedData$.subscribe((data) => {
+    this.selectedData$.subscribe(asset => {
       if(this._currentChartSettings.selectedAsset != null){
-        this.selectedData = data;
-        this.dateRangeChangedSubject.next(this.selectedData.map(dataPoint => dataPoint.date));
+        this.selectedAsset = asset;
+        this.dateRangeChangedSubject.next(this.selectedAsset.data.map(dataPoint => dataPoint.date));
       }
     });
 
@@ -66,11 +64,10 @@ export class MainLineChartComponent implements OnInit{
   private redrawChart(): void{
     if(this.dateSliderRef != null){
       const [minDate, maxDate] = this.dateSliderRef.getSelectedDates();
-      let filteredData = this.selectedData.filter(dataPoint => (minDate <= dataPoint.date) && (dataPoint.date <= maxDate))
-      this.chartRef.drawChart(this._currentChartSettings, filteredData);
+      this.chartRef.drawChart(this._currentChartSettings, this.selectedAsset, minDate, maxDate);
     }
     else{
-      this.chartRef.drawChart(this._currentChartSettings, this.selectedData);
+      this.chartRef.drawChart(this._currentChartSettings, this.selectedAsset);
     }
   };
 }

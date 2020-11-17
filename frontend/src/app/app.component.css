@@ -1,7 +1,26 @@
-.app-index-chart-strip {
-    background-color: red;
+#mainNavBar {
+    height: 60px;
 }
 
-#test{
-    height: 200px;
+#mainBrand {
+    color: white;
+    font-size: xx-large;
+}
+
+#githubIcon {
+    color: white;
+}
+
+#mainFooter {
+    height: 30px;
+    font-weight: lighter;
+    font-size: small;
+}
+
+#footerText {
+    color: white;
+}
+
+[role=main] {
+    padding-top: 60px;  /* must sit below the nav bar */
 }

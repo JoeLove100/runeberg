@@ -179,4 +179,44 @@ describe("Utility functions", ()=> {
             expect(result).toEqual(new Date(2019, 11, 31));
         });
     })
+
+    describe("Get n month before today", () => {
+
+        beforeEach(() => {
+            jasmine.clock().mockDate(new Date(2020, 5, 30));
+        })
+
+        it("should return the end of the prior month if n=0", () => {
+            // arrange
+            let n = 0;
+
+            // act
+            let result = DateHelper.getNMonthsBeforeToday(n);
+            
+            // assert
+            expect(result).toEqual(new Date(2020, 4, 31));
+        });
+
+        it("should return the end of the month 3 months prior if n=2", () => {
+            // arrange
+            let n = 2;
+
+            // act
+            let result = DateHelper.getNMonthsBeforeToday(n);
+
+            // assert
+            expect(result).toEqual(new Date(2020, 2, 31));
+        });
+
+        it("should handle periods which cross over years correctly", () => {
+            // arrange
+            let n = 12
+
+            // act
+            let result = DateHelper.getNMonthsBeforeToday(n)
+
+            // assert
+            expect(result).toEqual(new Date(2019, 4, 31))
+        })
+    })
 }) 
