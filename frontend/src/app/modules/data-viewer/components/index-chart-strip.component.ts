@@ -16,8 +16,8 @@ export class IndexChartStripComponent implements OnInit {
   constructor(private marketDataService: MarketDataService) { }
 
   indices$ = this.marketDataService.allIndices$.pipe(
+    take(6),
     mergeMap(indices => from(indices).pipe(
-      take(6), // can only fit 6 on bar at the moment
       mergeMap(index => this.marketDataService.getIndexPriceSeriesObservable(index, this.chartStartDate)),
       toArray()
     ))

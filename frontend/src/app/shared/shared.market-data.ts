@@ -37,6 +37,11 @@ isEqualTo(other: Asset): boolean{
 
     return true;
 }
+
+getTotalReturn(): number{
+
+    return this.data[this.data.length - 1].value / this.data[0].value - 1; 
+}
 }
 
 export class DataPoint{

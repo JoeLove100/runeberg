@@ -1,18 +1,6 @@
-<div class="container">
-    <div class ="row">
-        <div class="col-4" style="font-size: 15px;">
-            <div class="row h-50">
-            {{asset.displayName}}
-            </div>
-            <div class="row">
-                100.00 <br>
-                10 (3.5%)
-            </div>
-        </div>
-        <div class="col-8 p-2">
-            <div>
-                <app-line-chart #lineChart style></app-line-chart>
-            </div>
-        </div>
+<div class="border-left border-right" fxLayout="column" fxLayoutAlign="center center" id="lineChartCard">
+    {{asset.displayName}} ({{periodReturn | percent: "1.1"}})
+    <div id="chartContainer" style="height: 80px; width: 200px;">
+        <canvas #lineChart>{{chart}}</canvas>
     </div>
 </div>
