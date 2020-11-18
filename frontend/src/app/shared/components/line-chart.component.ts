@@ -16,6 +16,25 @@ export class LineChartComponent {
 
   constructor() { }
 
+  private getUnitForDataLength(dataLength: number): string {
+
+    if (dataLength > 3000){
+      return "year";
+    }
+    else if ((500 < dataLength) && (dataLength <= 3000)){
+      return "quarter";
+    }
+    else if ((200 < dataLength) && (dataLength <= 500)){
+      return "month";
+    }
+    else if ((40 < dataLength) && (dataLength <= 200)){
+      return "week";
+    }
+    else {
+      return "day";
+    }
+  }
+
   
   drawChart(chartSettings: LineChartSettings,
     selectedAsset: Asset,
@@ -44,7 +63,7 @@ export class LineChartComponent {
         datasets: [{
           data: dataToPlot.map(dataPoint => dataPoint.value),
           fill: false,
-          pointRadius: 0,
+          pointRadius: dataToPlot.length < 300 ? 4: 0,
           borderColor: "rgba(0, 0, 0)",
           label: selectedAsset.displayName
         }]
@@ -55,27 +74,25 @@ export class LineChartComponent {
         legend: {
           display: false
         },
-        tooltips: {
-          enabled: false
-        },
         scales: {
           xAxes: [{
             gridLines: {
-              display: false
+              display: true
             },
             ticks: {
-              display: false
+              maxTicksLimit: 20,
+              display: true
             },
             type: 'time',
             time: {
               tooltipFormat: 'YYYY-MM-DD',
-              unit: 'month'
+              unit: this.getUnitForDataLength(dataToPlot.length)
             },
             distribution: 'series'
           }],
           yAxes: [{
             ticks: {
-              display: false,
+              display: true,
               callback: (tick: number) => {
                 if(chartSettings.showReturns){
                   return (tick * 100).toString() + "%"
