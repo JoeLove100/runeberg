@@ -90,7 +90,7 @@ describe("Utility functions", ()=> {
             expect(result.length).toBe(0);
         });
 
-        it(`Should return an array defined on all dates in the input save the first`, () => {
+        it(`Should return an array defined on all dates in the input including the first`, () => {
             // arrange
             const arr = [
                 new DataPoint(new Date(2020, 1, 31), 10),
@@ -103,7 +103,7 @@ describe("Utility functions", ()=> {
             let resultDates = result.map(dataPoint => dataPoint.date);
 
             // assert
-            expect(resultDates).toEqual([new Date(2020, 2, 28), new Date(2020, 3, 31)]);
+            expect(resultDates).toEqual([new Date(2020, 1, 31), new Date(2020, 2, 28), new Date(2020, 3, 31)]);
         });
 
         it(`Should calculate the % returns for inputs > length 1`, () => {
@@ -119,8 +119,9 @@ describe("Utility functions", ()=> {
             let resultValues = result.map(dataPoint => dataPoint.value);
 
             // assert
-            expect(resultValues[0]).toBeCloseTo(0.2)
-            expect(resultValues[1]).toBeCloseTo(-0.25)
+            expect(resultValues[0]).toBeCloseTo(0)
+            expect(resultValues[1]).toBeCloseTo(0.2)
+            expect(resultValues[2]).toBeCloseTo(-0.25)
         });
     })
 
