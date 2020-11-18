@@ -1,5 +1,5 @@
 import { Chart } from 'chart.js'
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Asset, DataPoint } from '../../shared/shared.market-data'
 import { LineChartSettings } from 'src/app/modules/data-viewer/components/data-viewer-menu.component';
 import { priceToCumulativeReturns } from '../utils'
