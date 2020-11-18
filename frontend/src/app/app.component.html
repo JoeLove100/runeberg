@@ -16,11 +16,16 @@
   </nav>  
 
   <!-- main content -->
-  <section fxLayout="row" fxLayoutAlign="end" role="main">
+  <section fxLayout="column" fxLayoutAlign="end" role="main">
 
     <!-- index summary chart header -->
-    <div fxLayout="row" fxLayoutAlign="center" style="height: 100px; width: 100%;">
+    <div fxLayout="row" fxLayoutAlign="center">
       <app-index-chart-strip fxFlex></app-index-chart-strip>
+    </div>
+
+    <!-- main area -->
+    <div fxFill>
+      <app-data-viewer class="m-3" fxFlex="1 0 auto"></app-data-viewer>
     </div>
   </section>
 

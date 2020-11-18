@@ -1,12 +1,10 @@
-<div class="container-fluid d-flex h-100 flex-column">
-    <div class="row">
-        <div>
-            <app-line-chart #lineChart></app-line-chart>
-        </div>
-        <ng-container *ngIf="dateRangeChangedAction$ | async as selectedDates">
-            <app-date-slider #dateSlider
-            [allDates]="selectedDates"
-            (datesChanged)="redrawChart()"></app-date-slider>
-        </ng-container>
-    </div>
+<div fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto">
+    <app-line-chart 
+    class="h-75 p-5"
+    #lineChart></app-line-chart>
+    <ng-container *ngIf="dateRangeChangedAction$ | async as selectedDates">
+        <app-date-slider #dateSlider
+        [allDates]="selectedDates"
+        (datesChanged)="redrawChart()"></app-date-slider>
+    </ng-container>
 </div>

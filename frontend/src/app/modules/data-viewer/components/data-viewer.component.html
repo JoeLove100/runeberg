@@ -1,11 +1,6 @@
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9 padding-0">
-            <app-main-line-chart #chartMain></app-main-line-chart>
-        </div>
-        <div class="col-sm-3 padding-0">
-            <app-data-viewer-menu #chartMenu
-            (settingsChanged)="onChartSettingsChanged()"></app-data-viewer-menu>
-        </div>
-    </div>
+<div fxLayout="row" fxLayoutAlign="start" fxFill>
+    <app-main-line-chart fxFlex="1 0 auto" 
+    #chartMain></app-main-line-chart>
+    <app-data-viewer-menu #chartMenu
+    (settingsChanged)="onChartSettingsChanged()"></app-data-viewer-menu>
 </div>

@@ -22,5 +22,6 @@
 }
 
 [role=main] {
-    padding-top: 60px;  /* must sit below the nav bar */
+    padding-top: 165px;  /* must sit below the nav bar and chart strip */
+    height: calc(100vh - 30px);  /* exclude header from total height */
 }
