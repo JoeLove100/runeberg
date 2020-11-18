@@ -46,14 +46,14 @@ export class LineChartComponent {
     }
 
     let dataToPlot = selectedAsset.data;
-    if(chartSettings.showReturns){  
-      dataToPlot = priceToCumulativeReturns(dataToPlot);
-    }
     if(startDate){
       dataToPlot = dataToPlot.filter(dataPoint => (startDate <= dataPoint.date));
     }
     if(endDate){
       dataToPlot = dataToPlot.filter(DataPoint => (DataPoint.date <= endDate))
+    }
+    if(chartSettings.showReturns){  
+      dataToPlot = priceToCumulativeReturns(dataToPlot);
     }
     
     this.chart = new Chart(this.lineChartRef.nativeElement, {
@@ -71,6 +71,14 @@ export class LineChartComponent {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        title: {
+          display: true,
+          position: "top",
+          fontFamily: "Bloomberg",
+          fontColor: "black",
+          fontSize: 24,
+          text: `Historic ${chartSettings.showReturns ? "returns" : "price"} data for ${selectedAsset.displayName.toLowerCase()}`
+        },
         legend: {
           display: false
         },

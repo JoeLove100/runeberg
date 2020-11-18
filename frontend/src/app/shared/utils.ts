@@ -34,6 +34,7 @@ export function priceToReturns(prices: DataPoint[]): DataPoint[] {
         return [];
     }
     else{
+        returns.push(new DataPoint(prices[0].date, 0))
         for(let i = 1; i < prices.length; i++){
             let periodReturn = prices[i].value / prices[i - 1].value - 1;
             returns.push(new DataPoint(prices[i].date, periodReturn));
