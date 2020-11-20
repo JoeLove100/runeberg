@@ -1,5 +1,7 @@
 <div class="border-left border-right" fxLayout="column" fxLayoutAlign="center center" id="lineChartCard">
-    {{asset.displayName}} ({{periodReturn | percent: "1.1"}})
+    <div id="lineChartHeader">
+        {{asset.displayName}} ({{periodReturn | percent: "1.1"}})
+    </div>
     <div id="chartContainer">
         <canvas #lineChart>{{chart}}</canvas>
     </div>

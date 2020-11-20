@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { LineChartSettings } from 'src/app/modules/data-viewer/components/data-viewer-menu.component';
 import { Asset } from '../shared.market-data';
 import { priceToCumulativeReturns } from '../utils';
@@ -9,10 +9,10 @@ import { Chart } from 'chart.js'
   templateUrl: './line-chart-card.component.html',
   styleUrls: ['./line-chart-card.component.css']
 })
-export class LineChartCardComponent implements OnInit, AfterViewInit {
+export class LineChartCardComponent implements OnInit, AfterViewChecked {
   
   @Input() asset: Asset;
-  @ViewChild('lineChart') private lineChartRef: any;
+  @ViewChild('lineChart', {static: true}) private lineChartRef: any;
   settings: LineChartSettings;
   chart: any;
   periodReturn: number;
@@ -21,11 +21,11 @@ export class LineChartCardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.settings = new LineChartSettings(this.asset, true)
+    this.periodReturn = this.asset.getTotalReturn();
+    this.drawChart(this.settings, this.asset)
   }
 
-  ngAfterViewInit(): void {
-    this.drawChart(this.settings, this.asset)
-    this.periodReturn = this.asset.getTotalReturn();
+  ngAfterViewChecked(): void {
   }
 
 
