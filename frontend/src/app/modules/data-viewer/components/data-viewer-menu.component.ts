@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivationEnd } from '@angular/router';
-import { BehaviorSubject, EMPTY, Subject, Subscription } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Asset } from 'src/app/shared/shared.market-data';
 import { MarketDataService } from '../../../services/market-data.service'
@@ -22,8 +22,6 @@ export class DataViewerMenuComponent implements OnInit, OnDestroy {
   allAssets: Asset[]
   
   private unsubscribe$ = new Subject<ActivationEnd>();
-  private assetSelectedSubject = new BehaviorSubject<Asset>(new Asset(162, "coal", "Coal"));
-  assetSelectedAction$ = this.assetSelectedSubject.asObservable();
 
   availableAssets$ = this.marketDataService.allAssets$.pipe(
     takeUntil(this.unsubscribe$),
